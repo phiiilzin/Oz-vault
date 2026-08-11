@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Suporte — {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <h2 class="section-title">💬 Precisa de ajuda?</h2>
+
+  <form method="post" class="form-card" style="max-width:520px;">
+    <div class="form-group">
+      <label>Categoria</label>
+      <select name="category" required>
+        {% for value, label in categories %}
+        <option value="{{ value }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Assunto (opcional)</label>
+      <input type="text" name="subject" placeholder="Ex: Dúvida sobre entrega">
+    </div>
+    <div class="form-group">
+      <label>Nome no Roblox (opcional)</label>
+      <input type="text" name="roblox_nick">
+    </div>
+    <div class="form-group">
+      <label>Discord</label>
+      <input type="text" name="discord_user" required placeholder="Para a equipe conseguir te responder">
+    </div>
+    <div class="form-group">
+      <label>Mensagem</label>
+      <textarea name="message" rows="4" required placeholder="Descreva o que você precisa..."></textarea>
+    </div>
+    <button class="btn btn-primary btn-block" type="submit">Abrir ticket</button>
+  </form>
+
+  <p style="color:var(--text-dim); font-size:0.85rem; margin-top:16px;">
+    Depois de abrir o ticket, guarde o link da página para acompanhar as respostas.
+  </p>
+</section>
+{% endblock %}

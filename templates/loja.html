@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Loja — {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <h2 class="section-title">🛍️ Loja</h2>
+
+  <form class="search-bar" method="get">
+    <input type="hidden" name="categoria" value="{{ cat_slug }}">
+    <input type="text" name="q" placeholder="🔎 Buscar produto..." value="{{ q }}">
+    <button class="btn btn-primary btn-sm" type="submit">Buscar</button>
+  </form>
+
+  <div class="filters">
+    <a href="{{ url_for('loja', q=q, categoria='todos') }}" class="filter-pill {{ 'active' if cat_slug == 'todos' else '' }}">TODOS</a>
+    {% for c in categories %}
+    <a href="{{ url_for('loja', q=q, categoria=c['slug']) }}" class="filter-pill {{ 'active' if cat_slug == c['slug'] else '' }}">{{ c['icon'] }} {{ c['name']|upper }}</a>
+    {% endfor %}
+  </div>
+
+  {% if products %}
+  <div class="grid">
+    {% for p in products %}
+    <a href="{{ url_for('produto_detail', product_id=p['id']) }}" class="card{{ ' card-bg' if p['background_image'] else '' }}"
+       {% if p['background_image'] %}style="background-image:linear-gradient(180deg, rgba(10,7,16,0.35), rgba(10,7,16,0.92)), url('{{ p['background_image'] }}');"{% endif %}>
+      <div class="card-media">{% if p['image'] %}<img src="{{ p['image'] }}" alt="{{ p['name'] }}">{% else %}🧪{% endif %}</div>
+      <div class="card-body">
+        <div class="card-title">{{ p['name'] }}</div>
+        <p class="card-desc">{{ p['description']|truncate(60) }}</p>
+        <span class="badge-status badge-{{ p['stock_state'] }}">{{ p['stock_label'] }}</span>
+        <div class="card-meta">
+          <span class="card-price">R$ {{ "%.2f"|format(p['base_price'])|replace(".", ",") }}</span>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p>Nenhum produto encontrado{% if q %} para "{{ q }}"{% endif %}.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

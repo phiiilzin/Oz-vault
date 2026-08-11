@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section container">
+  <h2 class="section-title">⚙️ Painel Administrativo</h2>
+  <div class="admin-nav">
+    {% if current_user['role'] == 'dono' %}
+    <a href="{{ url_for('admin_dashboard') }}" class="{{ 'active' if request.endpoint == 'admin_dashboard' else '' }}">Dashboard</a>
+    {% endif %}
+    <a href="{{ url_for('admin_produtos') }}" class="{{ 'active' if request.endpoint == 'admin_produtos' else '' }}">Produtos</a>
+    {% if current_user['role'] == 'dono' %}
+    <a href="{{ url_for('admin_pedidos') }}" class="{{ 'active' if request.endpoint == 'admin_pedidos' else '' }}">Pedidos</a>
+    <a href="{{ url_for('admin_tickets') }}" class="{{ 'active' if request.endpoint in ['admin_tickets','admin_ticket_detail'] else '' }}">Tickets</a>
+    <a href="{{ url_for('admin_avaliacoes') }}" class="{{ 'active' if request.endpoint == 'admin_avaliacoes' else '' }}">Avaliações</a>
+    <a href="{{ url_for('admin_pedidos_stock') }}" class="{{ 'active' if request.endpoint == 'admin_pedidos_stock' else '' }}">Pedidos de Stock</a>
+    <a href="{{ url_for('admin_parcerias') }}" class="{{ 'active' if request.endpoint == 'admin_parcerias' else '' }}">Parcerias</a>
+    <a href="{{ url_for('admin_vendedores') }}" class="{{ 'active' if request.endpoint == 'admin_vendedores' else '' }}">Vendedores</a>
+    <a href="{{ url_for('admin_personalizar') }}" class="{{ 'active' if request.endpoint == 'admin_personalizar' else '' }}">🎨 Personalizar Site</a>
+    {% endif %}
+  </div>
+  {% block admin_content %}{% endblock %}
+</section>
+{% endblock %}

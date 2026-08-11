@@ -1,0 +1,32 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Pedidos de Stock — Admin{% endblock %}
+{% block admin_content %}
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Produto</th><th>Qtd.</th><th>Roblox</th><th>Discord</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for r in requests %}
+      <tr>
+        <td>{{ r['product_name'] }}</td>
+        <td>{{ r['quantity'] or '-' }}</td>
+        <td>{{ r['roblox_nick'] or '-' }}</td>
+        <td>{{ r['discord_user'] or '-' }}</td>
+        <td>
+          <form method="post" style="display:flex; gap:6px;">
+            <input type="hidden" name="id" value="{{ r['id'] }}">
+            <select name="status">
+              <option value="pendente" {{ 'selected' if r['status']=='pendente' else '' }}>Pendente</option>
+              <option value="atendido" {{ 'selected' if r['status']=='atendido' else '' }}>Atendido</option>
+              <option value="cancelado" {{ 'selected' if r['status']=='cancelado' else '' }}>Cancelado</option>
+            </select>
+            <button class="btn btn-outline btn-sm" type="submit">Salvar</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" style="color:var(--text-dim);">Nenhum pedido de estoque.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

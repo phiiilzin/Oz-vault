@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ p['name'] }} — {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section container"
+  {% if p['background_image'] %}style="background-image:linear-gradient(180deg, rgba(10,7,16,0.5), rgba(10,7,16,0.95)); border-radius:16px; padding:20px;"{% endif %}>
+  {% if p['background_image'] %}
+  <div style="position:relative; margin:-20px -20px 20px; border-radius:16px 16px 0 0; overflow:hidden; height:180px; background-image:url('{{ p['background_image'] }}'); background-size:cover; background-position:center;"></div>
+  {% endif %}
+  <div style="display:grid; gap:24px; grid-template-columns: 1fr;" class="produto-grid">
+    <div class="card" style="max-width:340px;">
+      <div class="card-media" style="aspect-ratio:1/1; font-size:4rem;">
+        {% if p['image'] %}<img src="{{ p['image'] }}" alt="{{ p['name'] }}">{% else %}🧪{% endif %}
+      </div>
+    </div>
+
+    <div>
+      <h1 style="margin:0 0 6px;">{{ p['name'] }}</h1>
+      <span class="badge-status badge-{{ stock_state }}">{{ stock_label }}</span>
+      <p style="color:var(--text-dim); margin:14px 0;">{{ p['description'] }}</p>
+
+      {% if tiers|length > 1 %}
+      <div class="card" style="padding:14px; margin-bottom:16px;">
+        <strong style="font-size:0.9rem;">Preço por quantidade:</strong>
+        <table style="margin-top:8px;">
+          {% for t in tiers %}
+          <tr><td>{{ t['min_qty'] }}+ unidades</td><td>R$ {{ "%.2f"|format(t['unit_price'])|replace(".", ",") }} cada</td></tr>
+          {% endfor %}
+        </table>
+      </div>
+      {% endif %}
+
+      <form method="post" action="{{ url_for('carrinho_adicionar', product_id=p['id']) }}">
+        <div class="form-group" style="max-width:160px;">
+          <label>Quantidade</label>
+          <input type="number" name="qty" value="1" min="1" max="{{ p['stock'] }}" class="qty-input" {{ 'disabled' if p['stock'] <= 0 else '' }}>
+        </div>
+        <p style="font-size:1.3rem; font-weight:800; color:var(--pink);">
+          Preço unitário: R$ {{ "%.2f"|format(p['base_price'])|replace(".", ",") }}
+        </p>
+        <button type="submit" class="btn btn-primary" {{ 'disabled' if p['stock'] <= 0 else '' }}>
+          🛒 ADICIONAR AO CARRINHO
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

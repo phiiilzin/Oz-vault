@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}{{ store_name }}{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% if site_settings.get('site_background_image') or site_settings.get('site_background_color') or site_settings.get('primary_color') %}
+<style>
+  {% if site_settings.get('primary_color') %}
+  :root {
+    --pink: {{ site_settings['primary_color'] }};
+    --purple: {{ site_settings['primary_color'] }};
+  }
+  {% endif %}
+  {% if site_settings.get('site_background_image') %}
+  body {
+    background-image: url('{{ site_settings["site_background_image"] }}');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+  {% elif site_settings.get('site_background_color') %}
+  body { background-color: {{ site_settings['site_background_color'] }}; }
+  {% endif %}
+</style>
+{% endif %}
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="{{ url_for('home') }}" class="brand">
+      <span class="brand-icon">OZ</span>
+      <span>{{ store_name }}</span>
+    </a>
+    <div class="nav-links">
+      <a href="{{ url_for('home') }}">HOME</a>
+      <a href="{{ url_for('loja') }}">LOJA</a>
+      <a href="{{ url_for('estoque') }}">ESTOQUE</a>
+      <a href="{{ url_for('suporte') }}">SUPORTE</a>
+      <a href="{{ url_for('avaliacoes') }}">AVALIAÇÕES</a>
+    </div>
+    <div class="nav-actions">
+      {% if current_user %}
+        <a href="{{ url_for('admin_dashboard') }}" class="icon-btn" title="Painel admin">⚙️</a>
+      {% endif %}
+      <a href="{{ url_for('carrinho') }}" class="icon-btn" title="Carrinho">
+        🛒
+        {% if cart_count %}<span class="badge">{{ cart_count }}</span>{% endif %}
+      </a>
+      <button class="mobile-toggle" onclick="document.getElementById('mobileMenu').classList.toggle('open')">☰</button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('loja') }}">Loja</a>
+    <a href="{{ url_for('estoque') }}">Estoque</a>
+    <a href="{{ url_for('suporte') }}">Suporte</a>
+    <a href="{{ url_for('avaliacoes') }}">Avaliações</a>
+    <a href="{{ url_for('restock') }}">Restock</a>
+    <a href="{{ url_for('parcerias') }}">Parcerias</a>
+    {% if current_user %}
+      <a href="{{ url_for('admin_dashboard') }}">Painel admin</a>
+      <a href="{{ url_for('logout') }}">Sair ({{ current_user['username'] }})</a>
+    {% endif %}
+  </div>
+</nav>
+
+<div class="flash-wrap">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}" onclick="this.remove()">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>
+
+<main class="page-pad-bottom">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p><strong>{{ store_name }}</strong> — {{ store_tagline }}</p>
+    {% if site_settings.get('footer_text') %}
+    <p>{{ site_settings['footer_text'] }}</p>
+    {% else %}
+    <p>© 2026 {{ store_name }}. Loja não afiliada à Roblox Corporation.</p>
+    {% endif %}
+    {% if not current_user %}
+    <p style="margin-top:8px;"><a href="{{ url_for('login') }}" style="color:var(--text-dim); font-size:0.8rem;">Acesso da equipe</a></p>
+    {% endif %}
+  </div>
+</footer>
+
+<nav class="mobile-tabbar">
+  <a href="{{ url_for('home') }}">
+    <span class="tab-icon">🏠</span>Home
+  </a>
+  <a href="{{ url_for('loja') }}">
+    <span class="tab-icon">🛍️</span>Loja
+  </a>
+  <a href="{{ url_for('estoque') }}">
+    <span class="tab-icon">📦</span>Estoque
+  </a>
+  <a href="{{ url_for('carrinho') }}">
+    <span class="tab-icon">🛒</span>Carrinho
+  </a>
+  <a href="{{ url_for('suporte') }}">
+    <span class="tab-icon">💬</span>Suporte
+  </a>
+</nav>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

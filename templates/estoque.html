@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Estoque — {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <h2 class="section-title">📦 Estoque</h2>
+  <p style="color:var(--text-dim); margin-top:-10px;">Estoque atualizado em tempo real, direto do servidor.</p>
+
+  <!-- Cards: usado no mobile (evita scroll horizontal) -->
+  <div class="stock-cards">
+    {% for p in products %}
+    <div class="stock-card">
+      <div class="stock-card-top">
+        <div>
+          <div class="stock-card-name">{{ p['name'] }}</div>
+          <div class="stock-card-cat">{{ p['cat_name'] }}</div>
+        </div>
+        <span class="badge-status badge-{{ p['stock_state'] }}">{{ p['stock_label'] }}</span>
+      </div>
+      <div class="stock-card-bottom">
+        <span>💰 R$ {{ "%.2f"|format(p['base_price'])|replace(".", ",") }}</span>
+        <span>📦 {{ p['stock'] }} un.</span>
+      </div>
+      {% if p['stock'] > 0 and p['active'] %}
+      <a href="{{ url_for('produto_detail', product_id=p['id']) }}" class="btn btn-primary btn-sm btn-block">COMPRAR</a>
+      {% else %}
+      <form method="post" action="{{ url_for('restock_avisar', product_id=p['id']) }}">
+        <button class="btn btn-outline btn-sm btn-block" type="submit">🔔 AVISAR QUANDO VOLTAR</button>
+      </form>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Tabela: usada em telas maiores -->
+  <div class="table-wrap stock-table">
+    <table>
+      <thead>
+        <tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        <tr>
+          <td>{{ p['name'] }}</td>
+          <td>{{ p['cat_name'] }}</td>
+          <td>R$ {{ "%.2f"|format(p['base_price'])|replace(".", ",") }}</td>
+          <td>{{ p['stock'] }}</td>
+          <td><span class="badge-status badge-{{ p['stock_state'] }}">{{ p['stock_label'] }}</span></td>
+          <td>
+            {% if p['stock'] > 0 and p['active'] %}
+            <a href="{{ url_for('produto_detail', product_id=p['id']) }}" class="btn btn-primary btn-sm">COMPRAR</a>
+            {% else %}
+            <form method="post" action="{{ url_for('restock_avisar', product_id=p['id']) }}">
+              <button class="btn btn-outline btn-sm" type="submit">🔔 AVISAR</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Ticket #{{ ticket['id'] }} — {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section container" style="max-width:600px; margin:0 auto;">
+  <h2 class="section-title">🎫 Ticket #{{ ticket['id'] }}</h2>
+  <p style="color:var(--text-dim);">{{ ticket['subject'] }} — <strong>{{ ticket['status']|replace('_',' ')|capitalize }}</strong></p>
+
+  <div style="display:flex; flex-direction:column; margin:20px 0;">
+    {% for m in messages %}
+    <div class="msg-bubble {{ 'msg-admin' if m['is_admin'] else 'msg-user' }}">
+      <strong style="display:block; font-size:0.78rem; opacity:0.8;">{{ m['sender'] }}</strong>
+      {{ m['message'] }}
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if ticket['status'] != 'finalizado' %}
+  <form method="post" style="display:flex; gap:8px;">
+    <input type="text" name="message" placeholder="Escreva uma mensagem..." required>
+    <button class="btn btn-primary" type="submit">Enviar</button>
+  </form>
+  {% else %}
+  <p class="empty-state">Este ticket foi finalizado.</p>
+  {% endif %}
+</section>
+{% endblock %}

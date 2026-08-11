@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Pedido #{{ order['id'] }} — {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section container" style="max-width:480px; margin:0 auto; text-align:center;">
+  <h2 class="section-title" style="justify-content:center;">PEDIDO #{{ '%04d'|format(order['id']) }}</h2>
+  <p style="font-size:1.6rem; font-weight:800; color:var(--pink);">R$ {{ "%.2f"|format(order['total'])|replace(".", ",") }}</p>
+  <span class="badge-status badge-pouco">{{ order_status_map.get(order['status'], order['status']) }}</span>
+
+  <div class="qr-placeholder" style="margin:22px auto;"></div>
+  <p style="color:var(--text-dim); font-size:0.85rem;">Escaneie o QR Code com o app do seu banco, ou copie o código PIX abaixo.</p>
+
+  <div class="pix-box" id="pixCode">{{ order['pix_code'] }}</div>
+  <button class="btn btn-primary" style="margin-top:14px;" onclick="navigator.clipboard.writeText(document.getElementById('pixCode').textContent); this.textContent='✅ CÓDIGO COPIADO'">📋 COPIAR CÓDIGO</button>
+
+  <p style="color:var(--text-dim); font-size:0.8rem; margin-top:24px;">
+    O pagamento será confirmado automaticamente pela nossa equipe assim que identificado.
+    Guarde o link desta página para acompanhar o status do seu pedido.
+  </p>
+
+  {% if order['status'] == 'entregue' and not already_reviewed %}
+  <a href="{{ url_for('nova_avaliacao', order_id=order['id']) }}" class="btn btn-primary" style="margin-top:10px;">⭐ Avaliar pedido</a>
+  {% endif %}
+</section>
+{% endblock %}

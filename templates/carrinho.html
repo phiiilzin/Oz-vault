@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Carrinho — {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <h2 class="section-title">🛒 Carrinho</h2>
+
+  {% if items %}
+  <div style="display:grid; gap:20px; grid-template-columns: 1fr;" class="cart-grid">
+    <div>
+      {% for item in items %}
+      <div class="cart-item">
+        <div class="thumb">{% if item.product['image'] %}<img src="{{ item.product['image'] }}">{% else %}🧪{% endif %}</div>
+        <div class="info">
+          <div style="font-weight:700;">{{ item.product['name'] }}</div>
+          <div style="color:var(--text-dim); font-size:0.85rem;">R$ {{ "%.2f"|format(item.unit_price)|replace(".", ",") }} / un.</div>
+          <form method="post" action="{{ url_for('carrinho_atualizar', product_id=item.product['id']) }}" style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+            <input type="number" name="qty" value="{{ item.qty }}" min="0" max="{{ item.product['stock'] }}" class="qty-input" style="width:60px;">
+            <button class="btn btn-outline btn-sm" type="submit">Atualizar</button>
+          </form>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:800; color:var(--pink);">R$ {{ "%.2f"|format(item.subtotal)|replace(".", ",") }}</div>
+          <form method="post" action="{{ url_for('carrinho_remover', product_id=item.product['id']) }}">
+            <button class="btn btn-danger btn-sm" style="margin-top:6px;" type="submit">Remover</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+      <form method="post" action="{{ url_for('carrinho_limpar') }}">
+        <button class="btn btn-outline btn-sm" type="submit">🗑️ Limpar carrinho</button>
+      </form>
+    </div>
+
+    <div class="cart-summary">
+      <div class="summary-row"><span>Itens</span><span>{{ items|length }}</span></div>
+      <div class="summary-row total"><span>Total</span><span>R$ {{ "%.2f"|format(total)|replace(".", ",") }}</span></div>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
+        <a href="{{ url_for('loja') }}" class="btn btn-outline btn-block">CONTINUAR COMPRANDO</a>
+        <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-block">FINALIZAR PEDIDO</a>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p>Seu carrinho está vazio.</p>
+    <a href="{{ url_for('loja') }}" class="btn btn-primary" style="margin-top:12px;">Ir para a loja</a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

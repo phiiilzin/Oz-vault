@@ -1,0 +1,30 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Pedidos — Admin{% endblock %}
+{% block admin_content %}
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>#</th><th>Cliente</th><th>Total</th><th>Pagamento</th><th>Status</th><th>Alterar</th></tr></thead>
+    <tbody>
+      {% for o in orders %}
+      <tr>
+        <td>#{{ o['id'] }}</td>
+        <td>{{ o['roblox_nick'] or '-' }}</td>
+        <td>R$ {{ "%.2f"|format(o['total'])|replace(".", ",") }}</td>
+        <td>{{ o['payment_method']|upper }}</td>
+        <td>{{ order_status_map.get(o['status'], o['status']) }}</td>
+        <td>
+          <form method="post" action="{{ url_for('admin_pedido_status', order_id=o['id']) }}" style="display:flex; gap:6px;">
+            <select name="status">
+              {% for value, label in statuses %}
+              <option value="{{ value }}" {{ 'selected' if o['status']==value else '' }}>{{ label }}</option>
+              {% endfor %}
+            </select>
+            <button class="btn btn-outline btn-sm" type="submit">Salvar</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

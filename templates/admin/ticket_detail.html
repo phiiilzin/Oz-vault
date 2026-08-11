@@ -1,0 +1,31 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Ticket #{{ ticket['id'] }} — Admin{% endblock %}
+{% block admin_content %}
+<a href="{{ url_for('admin_tickets') }}" style="color:var(--text-dim);">← Voltar</a>
+<h3>Ticket #{{ ticket['id'] }} — {{ ticket['roblox_nick'] or ticket['discord_user'] or 'Cliente' }}</h3>
+<p style="color:var(--text-dim); font-size:0.85rem;">Discord: {{ ticket['discord_user'] or '-' }}</p>
+<p style="color:var(--text-dim);">{{ ticket['subject'] }} — <strong>{{ ticket['status']|replace('_',' ')|capitalize }}</strong></p>
+
+<div style="display:flex; flex-direction:column; margin:20px 0; max-width:600px;">
+  {% for m in messages %}
+  <div class="msg-bubble {{ 'msg-admin' if m['is_admin'] else 'msg-user' }}">
+    <strong style="display:block; font-size:0.78rem; opacity:0.8;">{{ m['sender'] }}</strong>
+    {{ m['message'] }}
+  </div>
+  {% endfor %}
+</div>
+
+{% if ticket['status'] != 'finalizado' %}
+<form method="post" style="display:flex; gap:8px; max-width:600px;">
+  <input type="hidden" name="action" value="reply">
+  <input type="text" name="message" placeholder="Responder ao cliente..." required>
+  <button class="btn btn-primary" type="submit">Enviar</button>
+</form>
+<form method="post" style="margin-top:12px;">
+  <input type="hidden" name="action" value="finalizar">
+  <button class="btn btn-outline btn-sm" type="submit">✅ Finalizar ticket</button>
+</form>
+{% else %}
+<p class="empty-state">Ticket finalizado.</p>
+{% endif %}
+{% endblock %}

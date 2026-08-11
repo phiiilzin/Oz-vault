@@ -1,0 +1,92 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Produtos — Admin{% endblock %}
+{% block admin_content %}
+
+<details class="card" style="padding:16px; margin-bottom:20px;">
+  <summary style="cursor:pointer; font-weight:700;">➕ Adicionar novo produto</summary>
+  <form method="post" action="{{ url_for('admin_produto_novo') }}" enctype="multipart/form-data" style="margin-top:14px;">
+    <div class="form-group"><label>Nome</label><input type="text" name="name" required></div>
+    <div class="form-group">
+      <label>Categoria</label>
+      <select name="category_id" required>
+        {% for c in categories %}<option value="{{ c['id'] }}">{{ c['name'] }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="form-group"><label>Descrição</label><textarea name="description" rows="2"></textarea></div>
+    <div class="form-group"><label>Preço base (R$)</label><input type="number" step="0.01" name="base_price" value="0"></div>
+    <div class="form-group"><label>Estoque inicial</label><input type="number" name="stock" value="0"></div>
+    <div class="form-group"><label>Imagem do produto (upload)</label><input type="file" name="image_file" accept="image/*"></div>
+    <div class="form-group"><label>Ou URL da imagem</label><input type="text" name="image"></div>
+    <div class="form-group"><label>Imagem de fundo do card (upload)</label><input type="file" name="background_image_file" accept="image/*"></div>
+    <div class="form-group"><label>Ou URL da imagem de fundo</label><input type="text" name="background_image"></div>
+    <button class="btn btn-primary" type="submit">Criar produto</button>
+  </form>
+</details>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th>Ativo</th><th>Ações</th></tr></thead>
+    <tbody>
+      {% for p in products %}
+      <tr>
+        <td>{{ p['name'] }}</td>
+        <td>{{ p['cat_name'] }}</td>
+        <td>R$ {{ "%.2f"|format(p['base_price'])|replace(".", ",") }}</td>
+        <td>{{ p['stock'] }}</td>
+        <td>{{ '✅' if p['active'] else '🚫' }}</td>
+        <td>
+          <details>
+            <summary class="btn btn-outline btn-sm" style="display:inline-block; cursor:pointer;">Editar</summary>
+            <div style="margin-top:10px; min-width:260px;">
+              <form method="post" action="{{ url_for('admin_produto_editar', product_id=p['id']) }}" enctype="multipart/form-data">
+                <div class="form-group"><label>Nome</label><input type="text" name="name" value="{{ p['name'] }}"></div>
+                <div class="form-group">
+                  <label>Categoria</label>
+                  <select name="category_id">
+                    {% for c in categories %}<option value="{{ c['id'] }}" {{ 'selected' if c['id']==p['category_id'] else '' }}>{{ c['name'] }}</option>{% endfor %}
+                  </select>
+                </div>
+                <div class="form-group"><label>Descrição</label><textarea name="description" rows="2">{{ p['description'] }}</textarea></div>
+                <div class="form-group"><label>Preço base</label><input type="number" step="0.01" name="base_price" value="{{ p['base_price'] }}"></div>
+                <div class="form-group"><label>Estoque</label><input type="number" name="stock" value="{{ p['stock'] }}"></div>
+
+                {% if p['image'] %}<img src="{{ p['image'] }}" style="max-width:120px; border-radius:8px; margin-bottom:6px;">{% endif %}
+                <div class="form-group"><label>Trocar imagem do produto (upload)</label><input type="file" name="image_file" accept="image/*"></div>
+                <div class="form-group"><label>Ou URL da imagem</label><input type="text" name="image" value="{{ p['image'] or '' }}"></div>
+                {% if p['image'] %}<label style="display:block; margin-bottom:10px;"><input type="checkbox" name="remove_image" style="width:auto;"> Remover imagem do produto</label>{% endif %}
+
+                {% if p['background_image'] %}<img src="{{ p['background_image'] }}" style="max-width:120px; border-radius:8px; margin-bottom:6px;">{% endif %}
+                <div class="form-group"><label>Trocar imagem de fundo do card (upload)</label><input type="file" name="background_image_file" accept="image/*"></div>
+                <div class="form-group"><label>Ou URL da imagem de fundo</label><input type="text" name="background_image" value="{{ p['background_image'] or '' }}"></div>
+                {% if p['background_image'] %}<label style="display:block; margin-bottom:10px;"><input type="checkbox" name="remove_background_image" style="width:auto;"> Remover imagem de fundo</label>{% endif %}
+
+                <div class="form-group"><label><input type="checkbox" name="active" {{ 'checked' if p['active'] else '' }} style="width:auto;"> Produto ativo</label></div>
+                <button class="btn btn-primary btn-sm" type="submit">Salvar</button>
+              </form>
+
+              <form method="post" action="{{ url_for('admin_produto_precos', product_id=p['id']) }}" style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px;">
+                <label>Faixas de preço por quantidade</label>
+                {% set tiers = get_tiers_for(p['id']) if get_tiers_for is defined else [] %}
+                <div class="tier-row"><input type="number" name="min_qty" placeholder="Qtd. mínima" value="1"><input type="number" step="0.01" name="unit_price" placeholder="Preço unitário" value="{{ p['base_price'] }}"></div>
+                <div class="tier-row"><input type="number" name="min_qty" placeholder="Qtd. mínima"><input type="number" step="0.01" name="unit_price" placeholder="Preço unitário"></div>
+                <div class="tier-row"><input type="number" name="min_qty" placeholder="Qtd. mínima"><input type="number" step="0.01" name="unit_price" placeholder="Preço unitário"></div>
+                <button class="btn btn-outline btn-sm" type="submit">Salvar faixas de preço</button>
+              </form>
+
+              <form method="post" action="{{ url_for('admin_produto_estoque', product_id=p['id']) }}" style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px; display:flex; gap:8px;">
+                <input type="number" name="amount" placeholder="+/- estoque">
+                <button class="btn btn-outline btn-sm" type="submit">Ajustar estoque</button>
+              </form>
+
+              <form method="post" action="{{ url_for('admin_produto_excluir', product_id=p['id']) }}" style="margin-top:10px;" onsubmit="return confirm('Excluir este produto?');">
+                <button class="btn btn-danger btn-sm" type="submit">Excluir produto</button>
+              </form>
+            </div>
+          </details>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

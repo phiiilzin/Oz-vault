@@ -1,0 +1,58 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Personalizar Site — Admin{% endblock %}
+{% block admin_content %}
+
+<p style="margin-bottom:16px; color:var(--muted);">
+  Edite aqui os textos e a aparência geral do site. Essas mudanças valem pra loja inteira.
+</p>
+
+<form method="post" enctype="multipart/form-data" class="card" style="padding:16px; margin-bottom:20px;">
+  <h3 style="margin-bottom:12px;">🖼️ Fundo do site</h3>
+
+  {% if settings.get('site_background_image') %}
+    <div class="form-group">
+      <label>Fundo atual</label>
+      <img src="{{ settings['site_background_image'] }}" alt="Fundo atual" style="max-width:280px; border-radius:8px; display:block; margin-top:6px;">
+      <label style="margin-top:8px;"><input type="checkbox" name="remove_site_background" style="width:auto;"> Remover fundo atual</label>
+    </div>
+  {% endif %}
+
+  <div class="form-group">
+    <label>Trocar imagem de fundo (upload)</label>
+    <input type="file" name="site_background_file" accept="image/*">
+  </div>
+
+  <div class="form-group">
+    <label>Cor de fundo (usada se não houver imagem, ex: #0f0f14)</label>
+    <input type="text" name="site_background_color" value="{{ settings.get('site_background_color','') }}" placeholder="#0f0f14">
+  </div>
+
+  <div class="form-group">
+    <label>Cor primária do site (botões, destaques — ex: #7c5cff)</label>
+    <input type="text" name="primary_color" value="{{ settings.get('primary_color','') }}" placeholder="#7c5cff">
+  </div>
+
+  <h3 style="margin:20px 0 12px;">📝 Textos do site</h3>
+
+  <div class="form-group">
+    <label>Título de destaque (hero)</label>
+    <input type="text" name="hero_title" value="{{ settings.get('hero_title','') }}" placeholder="Deixe em branco para usar o padrão">
+  </div>
+
+  <div class="form-group">
+    <label>Subtítulo de destaque (hero)</label>
+    <input type="text" name="hero_subtitle" value="{{ settings.get('hero_subtitle','') }}" placeholder="Deixe em branco para usar o padrão">
+  </div>
+
+  <div class="form-group">
+    <label>Texto do rodapé</label>
+    <textarea name="footer_text" rows="2" placeholder="Deixe em branco para usar o padrão">{{ settings.get('footer_text','') }}</textarea>
+  </div>
+
+  <button class="btn btn-primary" type="submit">Salvar personalização</button>
+</form>
+
+<p style="color:var(--muted); font-size:0.9em;">
+  💡 Pra imagem de fundo de cada produto (não do site inteiro), edite o produto em <a href="{{ url_for('admin_produtos') }}">Produtos</a>.
+</p>
+{% endblock %}

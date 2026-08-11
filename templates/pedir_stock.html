@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Pedir Stock — {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <h2 class="section-title">📦 Pedir Stock</h2>
+  <p style="color:var(--text-dim); margin-top:-10px;">Peça um novo produto para a equipe avaliar e adicionar à loja.</p>
+
+  <form method="post" class="form-card" style="max-width:520px;">
+    <div class="form-group">
+      <label>Produto desejado</label>
+      <input type="text" name="product_name" required>
+    </div>
+    <div class="form-group">
+      <label>Quantidade</label>
+      <input type="number" name="quantity" min="1">
+    </div>
+    <div class="form-group">
+      <label>Nome no Roblox</label>
+      <input type="text" name="roblox_nick">
+    </div>
+    <div class="form-group">
+      <label>Discord</label>
+      <input type="text" name="discord_user">
+    </div>
+    <div class="form-group">
+      <label>Observação</label>
+      <textarea name="note" rows="3"></textarea>
+    </div>
+    <button class="btn btn-primary btn-block" type="submit">ENVIAR PEDIDO</button>
+  </form>
+</section>
+{% endblock %}

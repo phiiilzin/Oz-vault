@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Checkout — {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <h2 class="section-title">✅ Resumo do pedido</h2>
+
+  <div class="table-wrap" style="margin-bottom:20px;">
+    <table>
+      <thead><tr><th>Produto</th><th>Qtd.</th><th>Total</th></tr></thead>
+      <tbody>
+        {% for item in items %}
+        <tr><td>{{ item.product['name'] }}</td><td>{{ item.qty }}</td><td>R$ {{ "%.2f"|format(item.subtotal)|replace(".", ",") }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-card">
+    <h3 style="margin-top:0;">Informações do comprador</h3>
+    <form method="post">
+      <div class="form-group">
+        <label>Nickname no Roblox</label>
+        <input type="text" name="roblox_nick" required>
+      </div>
+      <div class="form-group">
+        <label>Usuário do Discord</label>
+        <input type="text" name="discord_user" required>
+      </div>
+      <div class="form-group">
+        <label>Forma de pagamento</label>
+        <input type="text" value="PIX" disabled>
+      </div>
+      <div class="summary-row total"><span>Total</span><span>R$ {{ "%.2f"|format(total)|replace(".", ",") }}</span></div>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;">FINALIZAR PEDIDO</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

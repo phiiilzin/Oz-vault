@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Avaliar pedido — {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <h2 class="section-title">⭐ Avaliar pedido #{{ '%04d'|format(order['id']) }}</h2>
+  <form method="post" class="form-card">
+    <div class="form-group">
+      <label>Nota</label>
+      <select name="rating">
+        <option value="5">★★★★★ Excelente</option>
+        <option value="4">★★★★☆ Muito bom</option>
+        <option value="3">★★★☆☆ Bom</option>
+        <option value="2">★★☆☆☆ Regular</option>
+        <option value="1">★☆☆☆☆ Ruim</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Comentário</label>
+      <textarea name="comment" rows="4" placeholder="Conte como foi sua experiência..."></textarea>
+    </div>
+    <button class="btn btn-primary btn-block" type="submit">Enviar avaliação</button>
+  </form>
+</section>
+{% endblock %}
