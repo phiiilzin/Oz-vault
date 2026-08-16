@@ -1,0 +1,27 @@
+{% extends "admin/base.html" %}
+{% block page_title %}Ticket #{{ ticket.id }}{% endblock %}
+{% block content %}
+<p class="muted">Tipo: {{ ticket.subject_type }} · Status: {{ ticket.status }}</p>
+
+<div class="ticket-chat">
+  {% for m in messages %}
+  <div class="ticket-msg ticket-msg-{{ m.sender }}">
+    <strong>{{ 'Cliente' if m.sender=='cliente' else 'Equipe' }}</strong>
+    <p>{{ m.message }}</p>
+    <span class="muted">{{ m.created_at }}</span>
+  </div>
+  {% endfor %}
+</div>
+
+{% if ticket.status == 'aberto' %}
+<form method="post" class="inline-form">
+  <input type="hidden" name="action" value="responder">
+  <input type="text" name="message" placeholder="Digite sua resposta..." required>
+  <button class="btn btn-primary btn-small" type="submit">Responder</button>
+</form>
+<form method="post">
+  <input type="hidden" name="action" value="finalizar">
+  <button class="btn btn-ghost btn-small" type="submit">✅ Finalizar Ticket</button>
+</form>
+{% endif %}
+{% endblock %}

@@ -1,50 +1,42 @@
 {% extends "base.html" %}
 {% block title %}Carrinho — {{ store_name }}{% endblock %}
 {% block content %}
-<section class="section container">
-  <h2 class="section-title">🛒 Carrinho</h2>
+<section class="section">
+  <h1 class="page-title">🛒 Carrinho</h1>
 
   {% if items %}
-  <div style="display:grid; gap:20px; grid-template-columns: 1fr;" class="cart-grid">
-    <div>
-      {% for item in items %}
-      <div class="cart-item">
-        <div class="thumb">{% if item.product['image'] %}<img src="{{ item.product['image'] }}">{% else %}🧪{% endif %}</div>
-        <div class="info">
-          <div style="font-weight:700;">{{ item.product['name'] }}</div>
-          <div style="color:var(--text-dim); font-size:0.85rem;">R$ {{ "%.2f"|format(item.unit_price)|replace(".", ",") }} / un.</div>
-          <form method="post" action="{{ url_for('carrinho_atualizar', product_id=item.product['id']) }}" style="display:flex; gap:8px; align-items:center; margin-top:6px;">
-            <input type="number" name="qty" value="{{ item.qty }}" min="0" max="{{ item.product['stock'] }}" class="qty-input" style="width:60px;">
-            <button class="btn btn-outline btn-sm" type="submit">Atualizar</button>
-          </form>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-weight:800; color:var(--pink);">R$ {{ "%.2f"|format(item.subtotal)|replace(".", ",") }}</div>
-          <form method="post" action="{{ url_for('carrinho_remover', product_id=item.product['id']) }}">
-            <button class="btn btn-danger btn-sm" style="margin-top:6px;" type="submit">Remover</button>
-          </form>
-        </div>
+  <div class="cart-table">
+    {% for it in items %}
+    <div class="cart-row">
+      <div class="cart-icon">{{ it.product.icon }}</div>
+      <div class="cart-info">
+        <h3>{{ it.product.name }}</h3>
+        <p class="muted">R$ {{ "%.4f"|format(it.unit_price) }} / un</p>
       </div>
-      {% endfor %}
-      <form method="post" action="{{ url_for('carrinho_limpar') }}">
-        <button class="btn btn-outline btn-sm" type="submit">🗑️ Limpar carrinho</button>
+      <form action="{{ url_for('carrinho_atualizar', product_id=it.product.id) }}" method="post" class="cart-qty">
+        <button type="submit" name="qty" value="{{ it.qty - 1 }}" class="qty-btn">−</button>
+        <input type="number" name="qty" value="{{ it.qty }}" min="0" class="qty-num" onchange="this.form.submit()">
+        <button type="submit" name="qty" value="{{ it.qty + 1 }}" class="qty-btn">+</button>
       </form>
+      <div class="cart-subtotal">R$ {{ "%.2f"|format(it.subtotal) }}</div>
+      <a href="{{ url_for('carrinho_remover', product_id=it.product.id) }}" class="remove-btn">🗑️</a>
     </div>
+    {% endfor %}
+  </div>
 
-    <div class="cart-summary">
-      <div class="summary-row"><span>Itens</span><span>{{ items|length }}</span></div>
-      <div class="summary-row total"><span>Total</span><span>R$ {{ "%.2f"|format(total)|replace(".", ",") }}</span></div>
-      <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
-        <a href="{{ url_for('loja') }}" class="btn btn-outline btn-block">CONTINUAR COMPRANDO</a>
-        <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-block">FINALIZAR PEDIDO</a>
-      </div>
-    </div>
+  <div class="cart-summary">
+    <a href="{{ url_for('carrinho_limpar') }}" class="btn btn-ghost">Limpar Carrinho</a>
+    <div class="cart-total">Total: <strong>R$ {{ "%.2f"|format(total) }}</strong></div>
   </div>
+
+  <div class="cart-actions">
+    <a href="{{ url_for('loja') }}" class="btn btn-ghost">← Continuar Comprando</a>
+    <a href="{{ url_for('checkout') }}" class="btn btn-primary">Finalizar Pedido →</a>
+  </div>
+
   {% else %}
-  <div class="empty-state">
-    <p>Seu carrinho está vazio.</p>
-    <a href="{{ url_for('loja') }}" class="btn btn-primary" style="margin-top:12px;">Ir para a loja</a>
-  </div>
+  <p class="muted">Seu carrinho está vazio.</p>
+  <a href="{{ url_for('loja') }}" class="btn btn-primary">Ir para a Loja</a>
   {% endif %}
 </section>
 {% endblock %}

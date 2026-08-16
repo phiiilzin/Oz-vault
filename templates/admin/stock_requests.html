@@ -1,0 +1,30 @@
+{% extends "admin/base.html" %}
+{% block page_title %}Pedidos de Stock{% endblock %}
+{% block content %}
+<div class="table-wrap">
+  <table class="admin-table">
+    <thead><tr><th>Produto</th><th>Descrição</th><th>Link</th><th>Status</th><th>Data</th></tr></thead>
+    <tbody>
+      {% for r in reqs %}
+      <tr>
+        <td>{{ r.product_name }}</td>
+        <td>{{ r.description[:60] }}</td>
+        <td>{% if r.link %}<a href="{{ r.link }}" target="_blank">link</a>{% else %}—{% endif %}</td>
+        <td>
+          <form method="post" action="{{ url_for('admin_stock_request_status', rid=r.id) }}" class="inline-form">
+            <select name="status" onchange="this.form.submit()">
+              <option value="pendente" {{ 'selected' if r.status=='pendente' }}>Pendente</option>
+              <option value="atendido" {{ 'selected' if r.status=='atendido' }}>Atendido</option>
+              <option value="cancelado" {{ 'selected' if r.status=='cancelado' }}>Cancelado</option>
+            </select>
+          </form>
+        </td>
+        <td>{{ r.created_at }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="muted">Nenhuma solicitação ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

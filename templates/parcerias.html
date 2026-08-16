@@ -1,32 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Parcerias — {{ store_name }}{% endblock %}
 {% block content %}
-<section class="section container">
-  <h2 class="section-title">🤝 Parcerias</h2>
-  <p style="color:var(--text-dim); margin-top:-10px;">Quer fazer parceria com a {{ store_name }}? Preencha o formulário abaixo.</p>
+<section class="section">
+  <h1 class="page-title">🤝 Parcerias</h1>
+  <p class="muted">Tem um servidor ou canal e quer fazer parceria com a {{ store_name }}? Envie sua proposta.</p>
 
-  <form method="post" class="form-card">
-    <div class="form-group">
-      <label>Nome</label>
+  <form method="post" class="simple-form">
+    <label>Nome
       <input type="text" name="name" required>
-    </div>
-    <div class="form-group">
-      <label>Discord</label>
-      <input type="text" name="discord_user" required>
-    </div>
-    <div class="form-group">
-      <label>Tipo de parceria</label>
-      <input type="text" name="partnership_type" placeholder="Ex: Divulgação, afiliado, servidor parceiro...">
-    </div>
-    <div class="form-group">
-      <label>Descrição</label>
-      <textarea name="description" rows="3"></textarea>
-    </div>
-    <div class="form-group">
-      <label>Link (servidor, site, etc.)</label>
+    </label>
+    <label>Discord
+      <input type="text" name="discord" required placeholder="usuario ou link do servidor">
+    </label>
+    <label>Tipo de parceria
+      <input type="text" name="type" placeholder="Ex: divulgação, afiliados...">
+    </label>
+    <label>Descrição
+      <textarea name="description" required></textarea>
+    </label>
+    <label>Link
       <input type="url" name="link" placeholder="https://...">
-    </div>
-    <button class="btn btn-primary btn-block" type="submit">ENVIAR</button>
+    </label>
+    <button class="btn btn-primary" type="submit">Enviar</button>
   </form>
 </section>
 {% endblock %}

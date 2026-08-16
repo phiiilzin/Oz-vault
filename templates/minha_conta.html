@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Minha Conta — {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section">
+  <h1 class="page-title">Meus Pedidos</h1>
+
+  {% set status_map = {
+    'aguardando_pagamento': ('🟡', 'Aguardando pagamento'),
+    'pagamento_recebido': ('🔵', 'Pagamento recebido'),
+    'processando': ('🟣', 'Processando'),
+    'entregue': ('🟢', 'Entregue'),
+    'cancelado': ('🔴', 'Cancelado')
+  } %}
+
+  {% if orders %}
+  {% for o in orders %}
+  <div class="order-card">
+    <div class="order-card-head">
+      <strong>Pedido #{{ "%04d"|format(o.id) }}</strong>
+      <span class="stock-badge">{{ status_map.get(o.status, ('⚪','—'))[0] }} {{ status_map.get(o.status, ('⚪','—'))[1] }}</span>
+    </div>
+    <p class="muted">{{ o.created_at }}</p>
+    <p>Total: <strong>R$ {{ "%.2f"|format(o.total) }}</strong></p>
+    {% if o.status == 'entregue' %}
+    <details>
+      <summary class="btn btn-small btn-ghost">⭐ Avaliar este pedido</summary>
+      <form method="post" action="{{ url_for('avaliar_pedido', order_id=o.id) }}" class="review-form">
+        <label>Nota
+          <select name="rating">
+            {% for i in range(10,0,-1) %}<option value="{{ i }}">{{ i }}/10</option>{% endfor %}
+          </select>
+        </label>
+        <textarea name="comment" placeholder="Conte como foi sua experiência..."></textarea>
+        <button class="btn btn-primary btn-small" type="submit">Enviar Avaliação</button>
+      </form>
+    </details>
+    {% endif %}
+  </div>
+  {% endfor %}
+  {% else %}
+  <p class="muted">Você ainda não fez nenhum pedido.</p>
+  <a href="{{ url_for('loja') }}" class="btn btn-primary">Ir para a Loja</a>
+  {% endif %}
+</section>
+{% endblock %}

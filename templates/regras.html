@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Regras — {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section">
+  <h1 class="page-title">📋 Regras</h1>
+  <p class="muted">Ao usar a {{ store_name }} e nossa comunidade no Discord, você concorda com as regras abaixo.</p>
+  <div class="rules-grid">
+    {% for title, desc in rules %}
+    <div class="rule-card">
+      <span class="rule-num">{{ loop.index }}</span>
+      <h3>{{ title }}</h3>
+      <p>{{ desc }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

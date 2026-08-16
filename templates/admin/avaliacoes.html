@@ -1,20 +1,19 @@
-{% extends "admin/base_admin.html" %}
-{% block title %}Avaliações — Admin{% endblock %}
-{% block admin_content %}
+{% extends "admin/base.html" %}
+{% block page_title %}Avaliações{% endblock %}
+{% block content %}
 <div class="table-wrap">
-  <table>
-    <thead><tr><th>Cliente</th><th>Produto</th><th>Nota</th><th>Comentário</th><th>Data</th></tr></thead>
+  <table class="admin-table">
+    <thead><tr><th>Usuário</th><th>Nota</th><th>Comentário</th><th>Data</th></tr></thead>
     <tbody>
       {% for r in reviews %}
       <tr>
-        <td>{{ r['roblox_nick'] or '-' }}</td>
-        <td>{{ r['product_name'] or '-' }}</td>
-        <td class="stars">{{ '★' * r['rating'] }}{{ '☆' * (5 - r['rating']) }}</td>
-        <td>{{ r['comment'] }}</td>
-        <td>{{ r['created_at'] }}</td>
+        <td>{{ r.username }}</td>
+        <td>{{ r.rating }}/10</td>
+        <td>{{ r.comment }}</td>
+        <td>{{ r.created_at }}</td>
       </tr>
       {% else %}
-      <tr><td colspan="5" style="color:var(--text-dim);">Nenhuma avaliação ainda.</td></tr>
+      <tr><td colspan="4" class="muted">Nenhuma avaliação ainda.</td></tr>
       {% endfor %}
     </tbody>
   </table>

@@ -1,25 +1,21 @@
 {% extends "base.html" %}
 {% block title %}Avaliações — {{ store_name }}{% endblock %}
 {% block content %}
-<section class="section container">
-  <h2 class="section-title">⭐ Avaliações</h2>
-
+<section class="section">
+  <h1 class="page-title">⭐ Avaliações</h1>
   {% if reviews %}
-  <div class="grid-wide grid">
+  <div class="reviews-grid">
     {% for r in reviews %}
-    <div class="card" style="padding:16px;">
-      <div class="stars">{{ '★' * r['rating'] }}{{ '☆' * (5 - r['rating']) }}</div>
-      <p style="margin:8px 0; color:var(--text-dim);">"{{ r['comment'] or 'Recomendo!' }}"</p>
-      <div class="card-meta">
-        <span>{{ r['roblox_nick'] or 'Cliente' }}</span>
-        <span>{{ r['product_name'] or '' }}</span>
-      </div>
-      <div style="font-size:0.75rem; color:var(--text-dim); margin-top:4px;">{{ r['created_at'] }}</div>
+    <div class="review-card">
+      <div class="stars">{{ '★' * (r.rating if r.rating <= 5 else 5) }}{{ '☆' * (5 - r.rating if r.rating <= 5 else 0) }}
+        <span class="rating-num">{{ r.rating }}/10</span></div>
+      <p class="review-comment">"{{ r.comment }}"</p>
+      <p class="muted">{{ r.username }}{% if r.product_name %} · {{ r.product_name }}{% endif %} · {{ r.created_at }}</p>
     </div>
     {% endfor %}
   </div>
   {% else %}
-  <div class="empty-state"><p>Ainda não há avaliações. Seja o primeiro a avaliar após uma compra!</p></div>
+  <p class="muted">Ainda não há avaliações. Elas aparecem aqui depois que os clientes finalizam uma compra.</p>
   {% endif %}
 </section>
 {% endblock %}

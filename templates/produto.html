@@ -1,47 +1,58 @@
 {% extends "base.html" %}
-{% block title %}{{ p['name'] }} — {{ store_name }}{% endblock %}
+{% block title %}{{ p.name }} — {{ store_name }}{% endblock %}
 {% block content %}
-<section class="section container"
-  {% if p['background_image'] %}style="background-image:linear-gradient(180deg, rgba(10,7,16,0.5), rgba(10,7,16,0.95)); border-radius:16px; padding:20px;"{% endif %}>
-  {% if p['background_image'] %}
-  <div style="position:relative; margin:-20px -20px 20px; border-radius:16px 16px 0 0; overflow:hidden; height:180px; background-image:url('{{ p['background_image'] }}'); background-size:cover; background-position:center;"></div>
-  {% endif %}
-  <div style="display:grid; gap:24px; grid-template-columns: 1fr;" class="produto-grid">
-    <div class="card" style="max-width:340px;">
-      <div class="card-media" style="aspect-ratio:1/1; font-size:4rem;">
-        {% if p['image'] %}<img src="{{ p['image'] }}" alt="{{ p['name'] }}">{% else %}🧪{% endif %}
-      </div>
+<section class="section product-detail">
+  <div class="product-detail-icon">{{ p.icon }}</div>
+  <div class="product-detail-info">
+    <h1>{{ p.name }}</h1>
+    <p class="muted">{{ p.description }}</p>
+
+    {% if p.stock > 20 %}<span class="stock-badge stock-ok">🟢 Disponível — {{ p.stock }} unidades</span>
+    {% elif p.stock > 0 %}<span class="stock-badge stock-low">🟡 Pouco estoque — {{ p.stock }} unidades</span>
+    {% else %}<span class="stock-badge stock-out">🔴 Esgotado</span>{% endif %}
+
+    <p class="price big">R$ <span id="unitPrice">{{ "%.2f"|format(p.base_price) }}</span> / unidade</p>
+
+    {% if tiers %}
+    <div class="tiers-box">
+      <p><strong>Preço por quantidade:</strong></p>
+      <ul>
+        <li>1 unidade: R$ {{ "%.2f"|format(p.base_price) }} cada</li>
+        {% for t in tiers %}
+        <li>{{ t.min_qty }}+ unidades: R$ {{ "%.4f"|format(t.unit_price) }} cada</li>
+        {% endfor %}
+      </ul>
     </div>
+    {% endif %}
 
-    <div>
-      <h1 style="margin:0 0 6px;">{{ p['name'] }}</h1>
-      <span class="badge-status badge-{{ stock_state }}">{{ stock_label }}</span>
-      <p style="color:var(--text-dim); margin:14px 0;">{{ p['description'] }}</p>
-
-      {% if tiers|length > 1 %}
-      <div class="card" style="padding:14px; margin-bottom:16px;">
-        <strong style="font-size:0.9rem;">Preço por quantidade:</strong>
-        <table style="margin-top:8px;">
-          {% for t in tiers %}
-          <tr><td>{{ t['min_qty'] }}+ unidades</td><td>R$ {{ "%.2f"|format(t['unit_price'])|replace(".", ",") }} cada</td></tr>
-          {% endfor %}
-        </table>
-      </div>
-      {% endif %}
-
-      <form method="post" action="{{ url_for('carrinho_adicionar', product_id=p['id']) }}">
-        <div class="form-group" style="max-width:160px;">
-          <label>Quantidade</label>
-          <input type="number" name="qty" value="1" min="1" max="{{ p['stock'] }}" class="qty-input" {{ 'disabled' if p['stock'] <= 0 else '' }}>
-        </div>
-        <p style="font-size:1.3rem; font-weight:800; color:var(--pink);">
-          Preço unitário: R$ {{ "%.2f"|format(p['base_price'])|replace(".", ",") }}
-        </p>
-        <button type="submit" class="btn btn-primary" {{ 'disabled' if p['stock'] <= 0 else '' }}>
-          🛒 ADICIONAR AO CARRINHO
-        </button>
-      </form>
-    </div>
+    {% if p.stock > 0 %}
+    <form action="{{ url_for('carrinho_adicionar', product_id=p.id) }}" method="post" class="qty-form">
+      <label>Quantidade
+        <input type="number" name="qty" id="qtyInput" value="1" min="1" max="{{ p.stock }}">
+      </label>
+      <p>Total: <strong>R$ <span id="totalPrice">{{ "%.2f"|format(p.base_price) }}</span></strong></p>
+      <button class="btn btn-primary" type="submit">🛒 Adicionar ao Carrinho</button>
+    </form>
+    {% else %}
+    <button class="btn btn-disabled" disabled>Esgotado</button>
+    {% endif %}
   </div>
 </section>
+
+<script>
+const basePrice = {{ p.base_price }};
+const tiers = [
+  {% for t in tiers %}{min_qty: {{ t.min_qty }}, unit_price: {{ t.unit_price }}},{% endfor %}
+];
+const qtyInput = document.getElementById('qtyInput');
+if (qtyInput) {
+  qtyInput.addEventListener('input', () => {
+    const qty = parseInt(qtyInput.value) || 1;
+    let unit = basePrice;
+    tiers.sort((a,b) => a.min_qty - b.min_qty).forEach(t => { if (qty >= t.min_qty) unit = t.unit_price; });
+    document.getElementById('unitPrice').textContent = unit.toFixed(4);
+    document.getElementById('totalPrice').textContent = (unit * qty).toFixed(2);
+  });
+}
+</script>
 {% endblock %}

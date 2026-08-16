@@ -1,43 +1,61 @@
-# Oz Vault Store
+# Oz Store
 
-Loja online completa para o servidor Discord **Oz Vault** (Grow a Garden 2), construída em **Flask + SQLite**, com a estrutura de navegação inspirada na MYU Store e identidade visual própria (tema escuro neon rosa/roxo, estilo "cofre mágico").
+Loja online (Flask + SQLite) baseada no conteúdo real do servidor Discord
+"Oz Vault", com a estrutura de navegação inspirada na MYU Store.
 
-## Como rodar
+## Rodando localmente (Termux / qualquer Linux)
 
 ```bash
-cd ozvault
-pip install -r requirements.txt
-python3 app.py
+pip install -r requirements.txt --break-system-packages
+python app.py
 ```
 
-O site sobe em `http://localhost:5000`. O banco de dados SQLite (`ozvault.db`) é criado automaticamente na primeira execução, já populado com as categorias e produtos (Seeds, Regadores, Maple, Sheckles, Sem Mínimo).
+Acesse: http://localhost:5000
 
-## Login de administrador padrão
+O banco `oz_store.db` é criado automaticamente na primeira execução, já
+populado com as categorias, produtos e avaliações reais coletados do
+Discord.
 
-- **Usuário:** `admin`
-- **Senha:** `ozvault-admin`
+## Painel administrativo
 
-⚠️ **Troque essa senha antes de usar em produção** (crie um novo admin pelo painel do banco ou registre um usuário e promova-o manualmente com `UPDATE users SET is_admin = 1 WHERE username = '...'`).
+URL: `/admin/login`
 
-## O que está implementado
+- Usuário: `admin`
+- Senha: `oz2026admin`
 
-- **Loja pública:** Home, Loja (busca + filtros por categoria), Estoque em tempo real, página de produto com preço por faixa de quantidade.
-- **Carrinho e checkout:** preços e estoque sempre recalculados no servidor (nunca confia em valores vindos do navegador); geração de pedido com código PIX "copia e cola" (placeholder — a confirmação real de pagamento deve vir de um webhook do seu provedor de pagamento).
-- **Conta de usuário:** cadastro/login com senha em hash, histórico de pedidos, avaliação de pedidos entregues.
-- **Suporte:** sistema de tickets (Comprar estoque / Suporte / Parceria / Outro) com chat entre cliente e equipe.
-- **Pedir Stock:** formulário para o cliente solicitar novos produtos.
-- **Restock:** lista de produtos que voltaram ao estoque + botão "avisar quando voltar".
-- **Avaliações:** só é possível avaliar após um pedido marcado como "entregue".
-- **Parcerias e Regras:** páginas dedicadas.
-- **Painel administrativo (`/admin`):** dashboard com métricas, CRUD de produtos (preço, estoque, categoria, imagem, faixas de preço por quantidade, ativar/desativar), gestão de pedidos (mudar status), tickets (responder/finalizar), avaliações, pedidos de estoque e parcerias.
-- **Mobile-first:** navbar vira menu hambúrguer, tabbar fixa inferior, tabelas viram cards no celular (sem scroll horizontal), botões grandes.
+**Troque essa senha assim que possível** (crie um novo admin com hash de
+senha e remova/edite o registro padrão na tabela `admins`).
 
-## Estrutura do banco (SQLite, criado automaticamente)
+## Deploy no Render
 
-`users`, `categories`, `products`, `price_tiers`, `orders`, `order_items`, `payments`, `tickets`, `ticket_messages`, `reviews`, `stock_requests`, `restocks`, `partnerships`, `notifications`, `restock_alerts`.
+1. Suba o projeto num repositório GitHub.
+2. Crie um "Web Service" no Render apontando para o repo.
+3. Build command: `pip install -r requirements.txt`
+4. Start command: `python app.py`
+5. Defina a variável de ambiente `SECRET_KEY` com um valor aleatório forte.
 
-## Próximos passos sugeridos (não implementados por serem integrações externas)
+⚠️ **Atenção**: no plano gratuito do Render o disco é efêmero — o arquivo
+`oz_store.db` (SQLite) é apagado a cada novo deploy/reinício. Para produção
+de verdade, migre para Postgres (Render oferece um plano gratuito) ou use
+um disco persistente pago.
 
-- Integração real com um provedor de PIX (ex. Mercado Pago, Efí, Gerencianet) para confirmar pagamentos automaticamente via webhook.
-- Bot de Discord para notificar a equipe sobre novos tickets/pedidos de estoque/parcerias.
-- Envio de e-mail/Discord DM para os alertas de restock (`restock_alerts`).
+## Estrutura
+
+- `app.py` — rotas e lógica da loja e do painel admin
+- `database.py` — schema SQLite + seed com dados reais do Discord
+- `templates/` — todas as páginas (loja + admin)
+- `static/` — CSS (tema escuro neon) e JS
+
+## O que já funciona
+
+- Loja com busca e filtro por categoria
+- Página de produto com preço por faixa de quantidade (configurável no admin)
+- Carrinho (adicionar/remover/atualizar quantidade)
+- Checkout com geração de pedido + código Pix (placeholder — plugue seu
+  gateway real substituindo `gen_pix_code` em `app.py`)
+- Baixa automática de estoque a cada compra confirmada no checkout
+- Minha conta / histórico de pedidos / avaliação pós-entrega
+- Suporte (tickets), Pedir Stock, Parcerias, Regras, Avaliações
+- Painel admin: dashboard, CRUD de produtos, faixas de preço, restock,
+  gestão de pedidos (mudar status), tickets (responder/finalizar),
+  pedidos de stock, parcerias, avaliações

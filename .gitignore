@@ -1,0 +1,44 @@
+# Banco de dados (nunca versionar dados de produção)
+*.db
+*.sqlite
+*.sqlite3
+oz_store.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+*.egg-info/
+.eggs/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Flask
+instance/
+.webassets-cache
+flask_session/
+
+# Variáveis de ambiente / segredos
+.env
+.env.*
+*.pem
+*.key
+
+# Logs
+*.log
+
+# Editor / SO
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Termux
+.termux/

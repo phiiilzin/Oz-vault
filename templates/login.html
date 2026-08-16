@@ -1,23 +1,32 @@
 {% extends "base.html" %}
-{% block title %}Login — {{ store_name }}{% endblock %}
+{% block title %}Entrar — {{ store_name }}{% endblock %}
 {% block content %}
-<section class="section container">
-  <div class="form-card">
-    <h2 style="margin-top:0; text-align:center;">Acesso da equipe</h2>
-    <p style="text-align:center; color:var(--text-dim); font-size:0.85rem; margin-top:-8px;">
-      Login exclusivo para dono e vendedores. Contas são criadas pelo dono no painel.
-    </p>
-    <form method="post">
-      <div class="form-group">
-        <label>Usuário</label>
-        <input type="text" name="username" required autofocus>
-      </div>
-      <div class="form-group">
-        <label>Senha</label>
-        <input type="password" name="password" required>
-      </div>
-      <button type="submit" class="btn btn-primary btn-block">ENTRAR</button>
-    </form>
+<section class="section auth-page">
+  <div class="auth-tabs">
+    <button class="auth-tab active" onclick="showForm('login')">Entrar</button>
+    <button class="auth-tab" onclick="showForm('cadastro')">Criar Conta</button>
   </div>
+
+  <form method="post" action="{{ url_for('login') }}" id="loginForm" class="simple-form">
+    <label>Usuário <input type="text" name="username" required></label>
+    <label>Senha <input type="password" name="password" required></label>
+    <button class="btn btn-primary btn-full" type="submit">Entrar</button>
+  </form>
+
+  <form method="post" action="{{ url_for('cadastro') }}" id="cadastroForm" class="simple-form" style="display:none">
+    <label>Usuário <input type="text" name="username" required></label>
+    <label>Senha <input type="password" name="password" required></label>
+    <label>Nickname do Roblox <input type="text" name="roblox_nick"></label>
+    <label>Discord <input type="text" name="discord_user"></label>
+    <button class="btn btn-primary btn-full" type="submit">Criar Conta</button>
+  </form>
 </section>
+<script>
+function showForm(which) {
+  document.getElementById('loginForm').style.display = which === 'login' ? 'flex' : 'none';
+  document.getElementById('cadastroForm').style.display = which === 'cadastro' ? 'flex' : 'none';
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
 {% endblock %}

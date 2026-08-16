@@ -1,28 +1,47 @@
-{% extends "admin/base_admin.html" %}
-{% block title %}Dashboard — Admin{% endblock %}
-{% block admin_content %}
+{% extends "admin/base.html" %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
 <div class="stat-grid">
-  <div class="stat-card"><div class="value">R$ {{ "%.2f"|format(stats.vendas_total)|replace(".", ",") }}</div><div class="label">Vendas totais</div></div>
-  <div class="stat-card"><div class="value">{{ stats.pedidos }}</div><div class="label">Pedidos</div></div>
-  <div class="stat-card"><div class="value">{{ stats.produtos }}</div><div class="label">Produtos</div></div>
-  <div class="stat-card"><div class="value">{{ stats.tickets_abertos }}</div><div class="label">Tickets abertos</div></div>
-  <div class="stat-card"><div class="value">{{ stats.avaliacoes }}</div><div class="label">Avaliações</div></div>
-  <div class="stat-card"><div class="value">{{ stats.pedidos_stock }}</div><div class="label">Pedidos de stock pendentes</div></div>
-  <div class="stat-card"><div class="value">{{ stats.parcerias }}</div><div class="label">Parcerias pendentes</div></div>
+  <div class="stat-card">
+    <span class="stat-icon">💰</span>
+    <div><p class="stat-label">Vendas Totais</p><p class="stat-value">R$ {{ "%.2f"|format(stats.vendas_total) }}</p></div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">🧾</span>
+    <div><p class="stat-label">Pedidos</p><p class="stat-value">{{ stats.pedidos }}</p></div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">📦</span>
+    <div><p class="stat-label">Produtos</p><p class="stat-value">{{ stats.produtos }}</p></div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">🎧</span>
+    <div><p class="stat-label">Tickets Abertos</p><p class="stat-value">{{ stats.tickets_abertos }}</p></div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">📥</span>
+    <div><p class="stat-label">Pedidos de Stock</p><p class="stat-value">{{ stats.stock_pendentes }}</p></div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">🤝</span>
+    <div><p class="stat-label">Parcerias Pendentes</p><p class="stat-value">{{ stats.parcerias_pendentes }}</p></div>
+  </div>
 </div>
 
-<h3>Pedidos recentes</h3>
+<h2 class="section-title">Pedidos Recentes</h2>
 <div class="table-wrap">
-  <table>
+  <table class="admin-table">
     <thead><tr><th>#</th><th>Total</th><th>Status</th><th>Data</th></tr></thead>
     <tbody>
       {% for o in recent_orders %}
       <tr>
-        <td>#{{ o['id'] }}</td>
-        <td>R$ {{ "%.2f"|format(o['total'])|replace(".", ",") }}</td>
-        <td>{{ order_status_map.get(o['status'], o['status']) }}</td>
-        <td>{{ o['created_at'] }}</td>
+        <td>#{{ "%04d"|format(o.id) }}</td>
+        <td>R$ {{ "%.2f"|format(o.total) }}</td>
+        <td>{{ o.status }}</td>
+        <td>{{ o.created_at }}</td>
       </tr>
+      {% else %}
+      <tr><td colspan="4" class="muted">Nenhum pedido ainda.</td></tr>
       {% endfor %}
     </tbody>
   </table>

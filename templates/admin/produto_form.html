@@ -1,0 +1,66 @@
+{% extends "admin/base.html" %}
+{% block page_title %}{{ 'Editar' if product else 'Novo' }} Produto{% endblock %}
+{% block content %}
+<form method="post" class="simple-form admin-form">
+  <label>Nome
+    <input type="text" name="name" required value="{{ product.name if product else '' }}">
+  </label>
+  <label>Categoria
+    <select name="category_id" required>
+      {% for c in categories %}
+      <option value="{{ c.id }}" {{ 'selected' if product and product.category_id==c.id }}>{{ c.icon }} {{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Ícone (emoji)
+    <input type="text" name="icon" value="{{ product.icon if product else '🌱' }}">
+  </label>
+  <label>Descrição
+    <textarea name="description">{{ product.description if product else '' }}</textarea>
+  </label>
+  <label>Preço base (R$)
+    <input type="number" step="0.01" min="0" name="base_price" required value="{{ product.base_price if product else '' }}">
+  </label>
+  <label>Estoque
+    <input type="number" min="0" name="stock" required value="{{ product.stock if product else 0 }}">
+  </label>
+  <label>Tipo de entrega
+    <select name="delivery_type">
+      <option value="auto" {{ 'selected' if product and product.delivery_type=='auto' }}>Automática</option>
+      <option value="manual" {{ 'selected' if product and product.delivery_type=='manual' }}>Manual</option>
+    </select>
+  </label>
+  <label class="checkbox-label">
+    <input type="checkbox" name="active" {{ 'checked' if not product or product.active }}>
+    Produto ativo (visível na loja)
+  </label>
+  <button class="btn btn-primary btn-full" type="submit">{{ 'Salvar Alterações' if product else 'Criar Produto' }}</button>
+</form>
+
+{% if product %}
+<div class="admin-subsection">
+  <h2 class="section-title">Preço por Quantidade</h2>
+  <table class="admin-table">
+    <thead><tr><th>A partir de</th><th>Preço/un</th></tr></thead>
+    <tbody>
+      {% for t in tiers %}
+      <tr><td>{{ t.min_qty }} unidades</td><td>R$ {{ "%.4f"|format(t.unit_price) }}</td></tr>
+      {% else %}
+      <tr><td colspan="2" class="muted">Nenhuma faixa de preço configurada.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <form method="post" action="{{ url_for('admin_produto_faixa', pid=product.id) }}" class="inline-form">
+    <input type="number" name="min_qty" placeholder="Qtd mínima" min="2" required>
+    <input type="number" step="0.0001" name="unit_price" placeholder="Preço/un" required>
+    <button class="btn btn-small btn-primary" type="submit">+ Adicionar Faixa</button>
+  </form>
+
+  <h2 class="section-title">Restock</h2>
+  <form method="post" action="{{ url_for('admin_produto_restock', pid=product.id) }}" class="inline-form">
+    <input type="number" name="qty" placeholder="Qtd a adicionar" min="1" required>
+    <button class="btn btn-small btn-primary" type="submit">+ Adicionar ao Estoque</button>
+  </form>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Pedido #{{ order.id }} — {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section pix-page">
+  <h1 class="page-title">Pedido #{{ "%04d"|format(order.id) }}</h1>
+  <p class="muted">Status: <span class="stock-badge stock-low">🟡 Aguardando pagamento</span></p>
+
+  <div class="pix-box">
+    <p class="price big">R$ {{ "%.2f"|format(order.total) }}</p>
+    <div class="qr-placeholder">📱 QR CODE PIX</div>
+    <p class="muted">Escaneie o QR Code ou copie o código abaixo no seu app do banco.</p>
+    <div class="pix-code-box">
+      <code id="pixCode">{{ order.pix_code }}</code>
+      <button class="btn btn-small btn-primary" onclick="copyPix()">📋 Copiar Código</button>
+    </div>
+    <p class="warn">⚠️ O pagamento é confirmado manualmente pela nossa equipe (ou via integração real de gateway). Após a confirmação, seu pedido muda para "Pagamento recebido" e a entrega é processada.</p>
+  </div>
+
+  <div class="order-items-box">
+    <h3>Itens do pedido</h3>
+    {% for it in items %}
+    <div class="summary-row">
+      <span>{{ it.qty }}x {{ it.product_name }}</span>
+      <span>R$ {{ "%.2f"|format(it.subtotal) }}</span>
+    </div>
+    {% endfor %}
+  </div>
+
+  <a href="{{ url_for('loja') }}" class="btn btn-ghost">← Voltar para a loja</a>
+</section>
+<script>
+function copyPix() {
+  navigator.clipboard.writeText(document.getElementById('pixCode').textContent);
+  alert('Código Pix copiado!');
+}
+</script>
+{% endblock %}

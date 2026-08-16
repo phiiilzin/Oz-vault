@@ -1,32 +1,21 @@
 {% extends "base.html" %}
 {% block title %}Pedir Stock — {{ store_name }}{% endblock %}
 {% block content %}
-<section class="section container">
-  <h2 class="section-title">📦 Pedir Stock</h2>
-  <p style="color:var(--text-dim); margin-top:-10px;">Peça um novo produto para a equipe avaliar e adicionar à loja.</p>
+<section class="section">
+  <h1 class="page-title">📦 Solicitar Produtos para Estoque</h1>
+  <p class="muted">Peça um novo produto para que a equipe avalie e adicione à loja. Há um cooldown de 3 minutos entre solicitações.</p>
 
-  <form method="post" class="form-card" style="max-width:520px;">
-    <div class="form-group">
-      <label>Produto desejado</label>
-      <input type="text" name="product_name" required>
-    </div>
-    <div class="form-group">
-      <label>Quantidade</label>
-      <input type="number" name="quantity" min="1">
-    </div>
-    <div class="form-group">
-      <label>Nome no Roblox</label>
-      <input type="text" name="roblox_nick">
-    </div>
-    <div class="form-group">
-      <label>Discord</label>
-      <input type="text" name="discord_user">
-    </div>
-    <div class="form-group">
-      <label>Observação</label>
-      <textarea name="note" rows="3"></textarea>
-    </div>
-    <button class="btn btn-primary btn-block" type="submit">ENVIAR PEDIDO</button>
+  <form method="post" class="simple-form">
+    <label>Produto desejado
+      <input type="text" name="product_name" required placeholder="Nome claro do produto">
+    </label>
+    <label>Quantidade / descrição
+      <textarea name="description" placeholder="Descreva as características relevantes e a quantidade desejada"></textarea>
+    </label>
+    <label>Link de referência (opcional)
+      <input type="url" name="link" placeholder="https://...">
+    </label>
+    <button class="btn btn-primary" type="submit">📦 Enviar Pedido</button>
   </form>
 </section>
 {% endblock %}

@@ -1,30 +1,28 @@
-{% extends "admin/base_admin.html" %}
-{% block title %}Parcerias — Admin{% endblock %}
-{% block admin_content %}
+{% extends "admin/base.html" %}
+{% block page_title %}Parcerias{% endblock %}
+{% block content %}
 <div class="table-wrap">
-  <table>
+  <table class="admin-table">
     <thead><tr><th>Nome</th><th>Discord</th><th>Tipo</th><th>Link</th><th>Status</th></tr></thead>
     <tbody>
-      {% for p in partnerships %}
+      {% for p in items %}
       <tr>
-        <td>{{ p['name'] }}</td>
-        <td>{{ p['discord_user'] }}</td>
-        <td>{{ p['partnership_type'] }}</td>
-        <td>{% if p['link'] %}<a href="{{ p['link'] }}" target="_blank" style="color:var(--pink);">Link</a>{% else %}-{% endif %}</td>
+        <td>{{ p.name }}</td>
+        <td>{{ p.discord }}</td>
+        <td>{{ p.type }}</td>
+        <td>{% if p.link %}<a href="{{ p.link }}" target="_blank">link</a>{% else %}—{% endif %}</td>
         <td>
-          <form method="post" style="display:flex; gap:6px;">
-            <input type="hidden" name="id" value="{{ p['id'] }}">
-            <select name="status">
-              <option value="pendente" {{ 'selected' if p['status']=='pendente' else '' }}>Pendente</option>
-              <option value="aprovado" {{ 'selected' if p['status']=='aprovado' else '' }}>Aprovado</option>
-              <option value="recusado" {{ 'selected' if p['status']=='recusado' else '' }}>Recusado</option>
+          <form method="post" action="{{ url_for('admin_parceria_status', pid=p.id) }}" class="inline-form">
+            <select name="status" onchange="this.form.submit()">
+              <option value="pendente" {{ 'selected' if p.status=='pendente' }}>Pendente</option>
+              <option value="aprovado" {{ 'selected' if p.status=='aprovado' }}>Aprovado</option>
+              <option value="recusado" {{ 'selected' if p.status=='recusado' }}>Recusado</option>
             </select>
-            <button class="btn btn-outline btn-sm" type="submit">Salvar</button>
           </form>
         </td>
       </tr>
       {% else %}
-      <tr><td colspan="5" style="color:var(--text-dim);">Nenhuma proposta de parceria.</td></tr>
+      <tr><td colspan="5" class="muted">Nenhuma proposta ainda.</td></tr>
       {% endfor %}
     </tbody>
   </table>

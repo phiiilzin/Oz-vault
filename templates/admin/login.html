@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Admin — {{ store_name }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="admin-body">
+<div class="admin-login-wrap">
+  <div class="admin-login-box">
+    <a href="{{ url_for('index') }}" class="logo admin-logo">
+      <span class="logo-mark">OZ</span><span class="logo-text">ADMIN</span>
+    </a>
+    <h1>Painel Administrativo</h1>
+
+    <div class="flash-wrap">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <form method="post" class="simple-form">
+      <label>Usuário <input type="text" name="username" required autofocus></label>
+      <label>Senha <input type="password" name="password" required></label>
+      <button class="btn btn-primary btn-full" type="submit">Entrar</button>
+    </form>
+    <a href="{{ url_for('index') }}" class="back-link">← Voltar para a loja</a>
+  </div>
+</div>
+</body>
+</html>

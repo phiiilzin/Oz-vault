@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Painel Admin{% endblock %} — {{ store_name }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="admin-body">
+
+<div class="admin-shell">
+  <aside class="admin-sidebar" id="adminSidebar">
+    <a href="{{ url_for('admin_dashboard') }}" class="logo admin-logo">
+      <span class="logo-mark">OZ</span><span class="logo-text">ADMIN</span>
+    </a>
+    <nav class="admin-nav">
+      <a href="{{ url_for('admin_dashboard') }}" class="{{ 'active' if request.endpoint=='admin_dashboard' }}">📊 Dashboard</a>
+      <a href="{{ url_for('admin_produtos') }}" class="{{ 'active' if 'produto' in request.endpoint }}">📦 Produtos</a>
+      <a href="{{ url_for('admin_pedidos') }}" class="{{ 'active' if 'pedido' in request.endpoint }}">🧾 Pedidos</a>
+      <a href="{{ url_for('admin_tickets') }}" class="{{ 'active' if 'ticket' in request.endpoint }}">🎧 Tickets</a>
+      <a href="{{ url_for('admin_stock_requests') }}" class="{{ 'active' if 'stock_request' in request.endpoint }}">📥 Pedidos de Stock</a>
+      <a href="{{ url_for('admin_parcerias') }}" class="{{ 'active' if 'parceria' in request.endpoint }}">🤝 Parcerias</a>
+      <a href="{{ url_for('admin_avaliacoes') }}" class="{{ 'active' if 'avaliacoes' in request.endpoint }}">⭐ Avaliações</a>
+      <hr>
+      <a href="{{ url_for('index') }}">🌐 Ver Loja</a>
+      <a href="{{ url_for('admin_logout') }}">🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <button class="hamburger" id="adminHamburger">☰</button>
+      <h1>{% block page_title %}Painel{% endblock %}</h1>
+    </div>
+
+    <div class="flash-wrap">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <div class="admin-content">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('adminHamburger').addEventListener('click', () => {
+  document.getElementById('adminSidebar').classList.toggle('open');
+});
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

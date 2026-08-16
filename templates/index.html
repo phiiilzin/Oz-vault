@@ -1,68 +1,61 @@
 {% extends "base.html" %}
-{% block title %}{{ store_name }} — {{ store_tagline }}{% endblock %}
 {% block content %}
 
 <section class="hero">
-  <div class="container">
-    <h1>{{ site_settings.get('hero_title') or store_name }}</h1>
-    <p class="tagline">{{ site_settings.get('hero_subtitle') or (store_tagline ~ '. Estoque atualizado direto do servidor, entrega automática e suporte real.') }}</p>
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <p class="hero-kicker">BEM-VINDO À</p>
+    <h1 class="hero-title"><span class="logo-mark big">OZ</span>STORE</h1>
+    <p class="hero-sub">Os melhores itens de Grow a Garden 2 em um só lugar. Entrega automática, estoque sempre em movimento.</p>
     <div class="hero-actions">
-      <a href="{{ url_for('loja') }}" class="btn btn-primary">🛒 COMPRAR AGORA</a>
-      <a href="{{ url_for('estoque') }}" class="btn btn-outline">📦 VER ESTOQUE</a>
+      <a href="{{ url_for('loja') }}" class="btn btn-primary">🛒 Comprar Agora</a>
+      <a href="{{ url_for('estoque') }}" class="btn btn-ghost">📦 Ver Estoque</a>
     </div>
   </div>
 </section>
 
-<section class="section container">
+<section class="trust-strip">
+  <div class="trust-item"><span>⚡</span><div><strong>Entrega Automática</strong><p>Na hora, direto pro seu jogo</p></div></div>
+  <div class="trust-item"><span>🛡️</span><div><strong>100% Seguro</strong><p>Compras protegidas e rastreadas</p></div></div>
+  <div class="trust-item"><span>👥</span><div><strong>+400 membros</strong><p>Comunidade ativa no Discord</p></div></div>
+</section>
+
+<section class="section">
   <h2 class="section-title">Categorias</h2>
-  <div class="grid">
-    {% for c in categories %}
-    <a href="{{ url_for('loja', categoria=c['slug']) }}" class="card cat-card">
-      <div class="icon">{{ c['icon'] }}</div>
-      <div class="card-title">{{ c['name'] }}</div>
-      <p class="card-desc">{{ c['description'] }}</p>
-      <div class="count">{{ c['product_count'] }} produtos</div>
+  <div class="card-grid">
+    {% for item in categories %}
+    <a href="{{ url_for('loja', categoria=item.cat.slug) }}" class="cat-card">
+      <div class="cat-icon">{{ item.cat.icon }}</div>
+      <h3>{{ item.cat.name }}</h3>
+      <p>{{ item.cat.description }}</p>
+      <span class="cat-count">{{ item.count }} produto(s)</span>
+      <span class="btn btn-small">Ver Produtos →</span>
     </a>
     {% endfor %}
   </div>
 </section>
 
 {% if featured %}
-<section class="section container">
-  <h2 class="section-title">🔥 Em <span class="accent">Destaque</span></h2>
-  <div class="grid">
+<section class="section">
+  <h2 class="section-title">Em destaque</h2>
+  <div class="card-grid">
     {% for p in featured %}
-    <a href="{{ url_for('produto_detail', product_id=p['id']) }}" class="card{{ ' card-bg' if p['background_image'] else '' }}"
-       {% if p['background_image'] %}style="background-image:linear-gradient(180deg, rgba(10,7,16,0.35), rgba(10,7,16,0.92)), url('{{ p['background_image'] }}');"{% endif %}>
-      <div class="card-media">{% if p['image'] %}<img src="{{ p['image'] }}" alt="{{ p['name'] }}">{% else %}🧪{% endif %}</div>
-      <div class="card-body">
-        <div class="card-title">{{ p['name'] }}</div>
-        <div class="card-meta">
-          <span class="card-price">R$ {{ "%.2f"|format(p['base_price'])|replace(".", ",") }}</span>
-          <span>{{ p['stock'] }} un.</span>
-        </div>
-      </div>
+    <a href="{{ url_for('produto', slug=p.slug) }}" class="product-card">
+      <div class="product-icon">{{ p.icon }}</div>
+      <h3>{{ p.name }}</h3>
+      <p class="price">R$ {{ "%.2f"|format(p.base_price) }}</p>
+      {% if p.stock > 20 %}<span class="stock-badge stock-ok">🟢 Disponível</span>
+      {% elif p.stock > 0 %}<span class="stock-badge stock-low">🟡 Pouco estoque</span>
+      {% else %}<span class="stock-badge stock-out">🔴 Esgotado</span>{% endif %}
     </a>
     {% endfor %}
   </div>
 </section>
 {% endif %}
 
-{% if reviews %}
-<section class="section container">
-  <h2 class="section-title">⭐ Avaliações recentes</h2>
-  <div class="grid-wide grid">
-    {% for r in reviews %}
-    <div class="card">
-      <div class="card-body">
-        <div class="stars">{{ '★' * r['rating'] }}{{ '☆' * (5 - r['rating']) }}</div>
-        <p class="card-desc">"{{ r['comment'] or 'Recomendo!' }}"</p>
-        <div class="card-meta"><span>{{ r['roblox_nick'] or 'Cliente' }}</span></div>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
+<section class="cta-band">
+  <h2>Precisa de um item que não está na loja?</h2>
+  <a href="{{ url_for('pedir_stock') }}" class="btn btn-primary">📦 Pedir Stock</a>
 </section>
-{% endif %}
 
 {% endblock %}

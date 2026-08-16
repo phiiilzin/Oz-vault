@@ -1,39 +1,31 @@
 {% extends "base.html" %}
 {% block title %}Suporte — {{ store_name }}{% endblock %}
 {% block content %}
-<section class="section container">
-  <h2 class="section-title">💬 Precisa de ajuda?</h2>
+<section class="section support-page">
+  <h1 class="page-title">🎧 Precisa de ajuda?</h1>
+  <p class="muted">Escolha uma opção e abra um ticket. Nossa equipe vai te atender em breve.</p>
 
-  <form method="post" class="form-card" style="max-width:520px;">
-    <div class="form-group">
-      <label>Categoria</label>
-      <select name="category" required>
-        {% for value, label in categories %}
-        <option value="{{ value }}">{{ label }}</option>
-        {% endfor %}
-      </select>
+  <form method="post" class="support-form">
+    <div class="support-options">
+      <label class="support-option">
+        <input type="radio" name="subject_type" value="comprar" checked>
+        <span>🛒 Comprar Estoque</span>
+      </label>
+      <label class="support-option">
+        <input type="radio" name="subject_type" value="suporte">
+        <span>🔧 Suporte</span>
+      </label>
+      <label class="support-option">
+        <input type="radio" name="subject_type" value="parceria">
+        <span>🤝 Parceria</span>
+      </label>
+      <label class="support-option">
+        <input type="radio" name="subject_type" value="outro">
+        <span>❓ Outro</span>
+      </label>
     </div>
-    <div class="form-group">
-      <label>Assunto (opcional)</label>
-      <input type="text" name="subject" placeholder="Ex: Dúvida sobre entrega">
-    </div>
-    <div class="form-group">
-      <label>Nome no Roblox (opcional)</label>
-      <input type="text" name="roblox_nick">
-    </div>
-    <div class="form-group">
-      <label>Discord</label>
-      <input type="text" name="discord_user" required placeholder="Para a equipe conseguir te responder">
-    </div>
-    <div class="form-group">
-      <label>Mensagem</label>
-      <textarea name="message" rows="4" required placeholder="Descreva o que você precisa..."></textarea>
-    </div>
-    <button class="btn btn-primary btn-block" type="submit">Abrir ticket</button>
+    <textarea name="subject" placeholder="Descreva o que você precisa..." required></textarea>
+    <button class="btn btn-primary" type="submit">Abrir Ticket</button>
   </form>
-
-  <p style="color:var(--text-dim); font-size:0.85rem; margin-top:16px;">
-    Depois de abrir o ticket, guarde o link da página para acompanhar as respostas.
-  </p>
 </section>
 {% endblock %}

@@ -1,32 +1,23 @@
-{% extends "admin/base_admin.html" %}
-{% block title %}Tickets — Admin{% endblock %}
-{% block admin_content %}
-
-{% macro ticket_table(items) %}
-<div class="table-wrap" style="margin-bottom:24px;">
-  <table>
-    <thead><tr><th>#</th><th>Cliente</th><th>Assunto</th><th></th></tr></thead>
+{% extends "admin/base.html" %}
+{% block page_title %}Tickets{% endblock %}
+{% block content %}
+<div class="table-wrap">
+  <table class="admin-table">
+    <thead><tr><th>#</th><th>Tipo</th><th>Assunto</th><th>Status</th><th>Data</th><th></th></tr></thead>
     <tbody>
-      {% for t in items %}
+      {% for t in tickets %}
       <tr>
-        <td>#{{ t['id'] }}</td>
-        <td>{{ t['roblox_nick'] or t['discord_user'] or '-' }}</td>
-        <td>{{ t['subject'] }}</td>
-        <td><a href="{{ url_for('admin_ticket_detail', ticket_id=t['id']) }}" class="btn btn-outline btn-sm">Abrir</a></td>
+        <td>#{{ t.id }}</td>
+        <td>{{ t.subject_type }}</td>
+        <td>{{ t.subject[:50] }}{{ '...' if t.subject|length > 50 }}</td>
+        <td>{{ '🟢 Aberto' if t.status=='aberto' else '⚪ Finalizado' }}</td>
+        <td>{{ t.created_at }}</td>
+        <td><a href="{{ url_for('admin_ticket_detalhe', tid=t.id) }}" class="btn btn-small btn-ghost">Abrir</a></td>
       </tr>
       {% else %}
-      <tr><td colspan="4" style="color:var(--text-dim);">Nenhum ticket aqui.</td></tr>
+      <tr><td colspan="6" class="muted">Nenhum ticket ainda.</td></tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
-{% endmacro %}
-
-<h3>🟢 Abertos</h3>
-{{ ticket_table(abertos) }}
-<h3>🟣 Em atendimento</h3>
-{{ ticket_table(andamento) }}
-<h3>✅ Finalizados</h3>
-{{ ticket_table(finalizados) }}
-
 {% endblock %}
